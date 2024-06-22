@@ -14,17 +14,26 @@
 
     /* 显示储存的任务清单 */
     const displayTasks = () => {
-      let tasks = Object.keys(localStorage);
+      let tasks = [];
+
+      // 从 localStorage 获取任务并存入数组
+      for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let taskData = JSON.parse(localStorage.getItem(key));
+        tasks.push({ key: key, value: taskData.value, completed: taskData.completed });
+      }
+      
+      // 按时间戳对任务排序
+      tasks.sort((a, b) => parseInt(a.key) - parseInt(b.key));
 
       /* 清楚当前显示内容 */
       const ul = document.querySelector(".toDoList");
       ul.innerHTML = '';
+      
       /* 显示所有任务 */
-      for (let key of tasks) {
-        const taskData = JSON.parse(localStorage.getItem(key));
-        addItemToDOM(key, taskData.value, taskData.completed);
-        // addItemToArray(key, taskValue);
-      }
+      tasks.forEach(task => {
+        addItemToDOM(task.key, task.value, task.completed);
+      });
     };
 
     /* 更新任务列表 */
